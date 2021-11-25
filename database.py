@@ -3,7 +3,7 @@ from sqlalchemy import create_engine, MetaData, Table, Integer, String, \
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
-engine = create_engine("mysql+mysqlconnector://root:root@127.0.0.1:3306/ppdatabase", echo=True)
+engine = create_engine("mysql+mysqlconnector://root:root@localhost:3306/ppdatabase")
 Base = declarative_base()
 meta = MetaData()
 meta.create_all(engine)
