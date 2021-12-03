@@ -1,339 +1,192 @@
 openapi: 3.0.1
 info:
-  title: "Credit Bank"
-  description: ""
-  version: "1"
+  title: Calendar API
+  version: 1.0.0
 servers:
-- url: http://0.0.0.0:3000/api/v1/hello-world-4
+  - url: /
 tags:
-- name: Users
-  description: All users
-- name: Credit
-  description: bank`s manager
+  - name: Credits
+  - name: Users
 paths:
-  /Users:
-    post:
-      tags:
-        - Users
-      summary: Create user
-      description: This can only be done by the logged in user.
-      operationId: createUser
-      responses:
-        default:
-          description: successful operation
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Created user object
-        required: true
-  /user/login:
+  /credits:
     get:
       tags:
-        - Users
-      summary: Logs user into the system
-      operationId: loginUser
-      parameters:
-        - name: username
-          in: query
-          description: The user name for login
-          required: true
-          schema:
-            type: string
-        - name: password
-          in: query
-          description: The password for login in clear text
-          required: true
-          schema:
-            type: string
+        - Credits
+      summary: Get all credits which created current user
+      operationId: get_credits
       responses:
         '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                type: string
-            application/xml:
-              schema:
-                type: string
-        '400':
-          description: Invalid username/password supplied
-  /user/logout:
-    get:
-      tags:
-        - Users
-      summary: Logs out current logged in user session
-      operationId: logoutUser
-      responses:
-        default:
-          description: successful operation
-  /user/{username}:
-    get:
-      tags:
-        - Users
-      summary: Get user by user name
-      operationId: getUserByName
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be fetched.
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/User'
-        '400':
-          description: Invalid username supplied
+          description: credits was successfully returned
+          content: {}
         '404':
-          description: User not found
-      security:
-        - User_api_key: []
-    put:
-      tags:
-        - Users
-      summary: Updated user
-      description: This can only be done by the logged in user.
-      operationId: updateUser
-      parameters:
-        - name: username
-          in: path
-          description: name that need to be updated
-          required: true
-          schema:
-            type: string
-      responses:
-        '400':
-          description: Invalid user supplied
-        '404':
-          description: User not found
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-        description: Updated user object
-        required: true
-      security:
-        - User_api_key: []
-    delete:
-      tags:
-        - Users
-      summary: Delete user
-      description: This can only be done by the logged in user.
-      operationId: deleteUser
-      parameters:
-        - name: username
-          in: path
-          description: The name that needs to be deleted
-          required: true
-          schema:
-            type: string
-      responses:
-        '400':
-          description: Invalid username supplied
-        '404':
-          description: User not found
-      security:
-        - User_api_key: []
-  /Users/{username}/credits:
+          description: credits doesn`t found
+          content: {}
+      x-openapi-router-controller: crud.credits_controller
     post:
       tags:
-      - Users
-      summary: Create credit
-      description: Create credit by user
-      operationId: register
-      parameters:
-      - name: username
-        in: path
-        description: The credit that needs to be fetched
-        required: true
-        schema:
-          type: string
+        - Credits
+      summary: Add a new credit to calendar
+      operationId: add_credit
       requestBody:
-        description: Created credit object
+        description: Params for creating credit
         content:
-          '*/*':
+          application/json:
             schema:
               $ref: '#/components/schemas/Credit'
         required: true
       responses:
-        default:
-          description: successful operation
-      security:
-      - User_api_key: []
-  /Users/{username}/credits/{id_credit}:
-    get:
-      tags:
-      - Users
-      summary: Get credit by user id
-      operationId: getCreditById
-      parameters:
-      - name: username
-        in: path
-        description: The credit that needs to be fetched
-        required: true
-        schema:
-          type: string
-      - name: id_credit
-        in: path
-        description: The credit that needs to be fetched
-        required: true
-        schema:
-          type: string
-      responses:
-        200:
-          description: successful operation
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Credit'
-            application/xml:
-              schema:
-                $ref: '#/components/schemas/Credit'
-        400:
-          description: Invalid id supplied
-        404:
-          description: Credit not found
-      security:
-      - User_api_key: []
-
-  /manager/{username}/credits/{id_credit}:
+        '201':
+          description: credit added
+          content: {}
+        '400':
+          description: Validation failed
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: crud.credits_controller
+  /credits/{credit_id}:
     put:
       tags:
-      - Credit
-      summary: Put client`s credit
-      description: This can only be done by the logged in client.
-      operationId: PutCredit
+        - Credits
+      summary: Update credit in calendar
+      operationId: update_credit
       parameters:
-      - name: username
-        in: path
-        description: The credit that needs to be fetched
-        required: true
-        schema:
-          type: string
-      - name: id_credit
-        in: path
-        description: The id that needs to be deleted
-        required: true
-        schema:
-          type: string
-      responses:
-        400:
-          description: Invalid id supplied
-        404:
-          description: Credit not found
-      security:
-      - Manager_api_key: []
-  /manager/balance:
-    get:
-      tags:
-      - Credit
-      summary: Return balance
-      description: return balance
-      operationId: getBalance
-      parameters:
-      - name: balance
-        in: query
-        description: all balance
-        schema:
-          type: integer
-          format: int64
-      responses:
-        200:
-          description: All balance
-          content:
-            '*/*':
-              schema:
-                type: integer
-                format: int64
-      security:
-        - Manager_api_key: []
-    put:
-      tags:
-        - Credit
-      summary: Updated balacne
-      description: Updated balacne
-      operationId: updateBalance
-      parameters:
-      - name: limit
-        in: query
-        schema:
-          type: integer
-          format: int64
+        - name: credit_id
+          in: path
+          description: The id of the credit to update
+          required: true
+          schema:
+            type: integer
       requestBody:
-        description: Updated user object
+        description: Params for updating credit
         content:
-          '*/*':
+          application/json:
             schema:
-              $ref: '#/components/schemas/Balance'
+              $ref: '#/components/schemas/Credit'
+        required: false
+      responses:
+        '201':
+          description: credit updated
+          content: {}
+        '400':
+          description: Validation failed
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: crud.credits_controller
+    delete:
+      tags:
+        - Credits
+      summary: Delete credit from calendar
+      operationId: delete_credit
+      parameters:
+        - name: credit_id
+          in: path
+          description: The id of the credit to remove from the calendar
+          required: true
+          schema:
+            type: integer
+      responses:
+        '202':
+          description: Successfully deleted credit
+          content: {}
+        '404':
+          description: credit doesn`t found
+          content: {}
+      x-openapi-router-controller: crud.credits_controller
+  /credits/{user_id}:
+    get:
+      tags:
+        - Credits
+      summary: Get all credits which contains this user
+      operationId: get_credits_by_user
+      parameters:
+        - name: user_id
+          in: path
+          description: The id of the user to get all credits to which he belongs
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: credits was successfully returned
+          content: {}
+        '404':
+          description: User doesn`t found
+          content: {}
+      x-openapi-router-controller: crud.credits_controller
+  /credits/{credit_id}/{user_id}:
+    post:
+      tags:
+        - Credits
+      summary: Add a new user to credit
+      operationId: add_user_to_credit
+      parameters:
+        - name: credit_id
+          in: path
+          description: The id of the credit to which we add new user
+          required: true
+          schema:
+            type: integer
+        - name: user_id
+          in: path
+          description: The id of the user which need to add to the credit
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Guest added
+          content: {}
+        '400':
+          description: Validation failed
+          content: {}
+      x-openapi-router-controller: crud.credits_controller
+    delete:
+      tags:
+        - Credits
+      summary: Delete user from credit
+      operationId: remove_user_from_credit
+      parameters:
+        - name: credit_id
+          in: path
+          description: The id of the credit to which we delete user
+          required: true
+          schema:
+            type: integer
+        - name: user_id
+          in: path
+          description: The id of the user which need to be deleted from the credit
+          required: true
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Guest added
+          content: {}
+        '400':
+          description: Validation failed
+          content: {}
+      x-openapi-router-controller: crud.credits_controller
+  /users:
+    post:
+      tags:
+        - Users
+      summary: Create new user
+      operationId: create_user
+      requestBody:
+        description: Params for creating user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
         required: true
       responses:
-        400:
-          description: Invalid user supplied
+        '200':
+          description: User created
           content: {}
-        404:
-          description: User not found
+        '400':
+          description: Validation failed
           content: {}
-      security:
-        - Manager_api_key: []
-  /manager/Users:
-    get:
-      tags:
-      - Credit
-      description: returns all registered clients
-      operationId: getClients
-      parameters:
-      - name: limit
-        in: query
-        description: max number of records to return
-        schema:
-          type: integer
-          format: int32
-      responses:
-        200:
-          description: All clients
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  type: string
-      security:
-       - Manager_api_key: []
-  /manager/credits:
-    get:
-      tags:
-      - Credit
-      description: returns all registered credit
-      operationId: getAllCredits
-      parameters:
-      - name: limit
-        in: query
-        description: max number of credit to return
-        schema:
-          type: integer
-          format: int32
-      responses:
-        200:
-          description: All credit
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  type: string
-      security:
-        - Manager_api_key: []
-
+      x-openapi-router-controller: crud.users_controller
 components:
   schemas:
     Credit:
@@ -390,19 +243,3 @@ components:
           enum:
             - user
             - manager
-    Balance:
-      type: object
-      properties:
-        balance:
-          type: integer
-          format: int64
-          default: 517000
-  securitySchemes:
-    User_api_key:
-      type: apiKey
-      name: User_api_key
-      in: header
-    Manager_api_key:
-      type: apiKey
-      name: Manager_api_key
-      in: header

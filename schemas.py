@@ -12,16 +12,13 @@ class UsersSchema(Schema):
 
 
 class CreditSchema(Schema):
-    idCredit = fields.Int()
-    loan_status = fields.Bool()
+    loan_status = fields.Str()
     loan_date = fields.Str()
     loan_amount = fields.Int()
     interest_rate = fields.Int()
     id_borrower = fields.Int()
 
 
-class BalanceSchema(Schema):
-    balance = fields.Int()
 
 # class Users(Base):
 #     __tablename__ = 'users'

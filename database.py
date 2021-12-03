@@ -24,18 +24,28 @@ class Users(Base):
     lastName = Column(String(45))
     status = Column(Enum('user', 'manager'))
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Credit(Base):
     __tablename__ = 'credit'
     idCredit = Column(Integer, nullable=False, primary_key=True)
-    loan_status = Column(Boolean, default=False)
+    loan_status = Column(Boolean, default="false")
     loan_date = Column(String(45))
     loan_amount = Column(Integer)
     interest_rate = Column(Integer)
     id_borrower = Column(Integer, ForeignKey('users.idUsers'))
     users = relationship("Users", backref="credites")
 
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Balance(Base):
     __tablename__ = 'balance'
     balance = Column(Integer, nullable=False, default=517000, primary_key=True)
+
+    def as_dict(self):
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
