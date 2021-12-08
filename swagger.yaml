@@ -92,19 +92,12 @@ paths:
           description: credit doesn`t found
           content: {}
       x-openapi-router-controller: crud.credits_controller
-  /credits/{user_id}:
+  /credits_by_user:
     get:
       tags:
         - Credits
       summary: Get all credits which contains this user
       operationId: get_credits_by_user
-      parameters:
-        - name: user_id
-          in: path
-          description: The id of the user to get all credits to which he belongs
-          required: true
-          schema:
-            type: integer
       responses:
         '200':
           description: credits was successfully returned
@@ -113,7 +106,7 @@ paths:
           description: User doesn`t found
           content: {}
       x-openapi-router-controller: crud.credits_controller
-  /credits/{credit_id}/{user_id}:
+  /credits_by_user/{credit_id}/{user_id}:
     post:
       tags:
         - Credits
@@ -122,13 +115,13 @@ paths:
       parameters:
         - name: credit_id
           in: path
-          description: The id of the credit to which we add new user
+          description: The id of the credit to which you add new user
           required: true
           schema:
             type: integer
         - name: user_id
           in: path
-          description: The id of the user which need to add to the credit
+          description: The id of the user who you add to the credit
           required: true
           schema:
             type: integer
@@ -143,48 +136,66 @@ paths:
     delete:
       tags:
         - Credits
-      summary: Delete user from credit
-      operationId: remove_user_from_credit
+      summary: Delete a user from credit
+      operationId: delete_user_from_credit
       parameters:
         - name: credit_id
           in: path
-          description: The id of the credit to which we delete user
+          description: The id of the credit from which you delete user
           required: true
           schema:
             type: integer
         - name: user_id
           in: path
-          description: The id of the user which need to be deleted from the credit
+          description: The id of the user who you delete from the credit
           required: true
           schema:
             type: integer
       responses:
-        '201':
-          description: Guest added
-          content: {}
-        '400':
-          description: Validation failed
-          content: {}
+        '202':
+          description: Guest deleted
+          content: { }
       x-openapi-router-controller: crud.credits_controller
-  /users:
+  /register:
     post:
       tags:
         - Users
-      summary: Create new user
-      operationId: create_user
+      summary: Register user
+      operationId: register_user
       requestBody:
-        description: Params for creating user
+        description: Params for registration
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/User'
         required: true
       responses:
-        '200':
-          description: User created
+        '201':
+          description: User registered
           content: {}
         '400':
-          description: Validation failed
+          description: Authorization failed
+          content: {}
+      x-openapi-router-controller: crud.users_controller
+  /login:
+    post:
+      tags:
+        - Users
+      summary: Get auth token
+      operationId: login_user
+      requestBody:
+        description: Login user data
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUser'
+        required: true
+      responses:
+        '200':
+          description: User Logged in
+          content: {}
+        '401':
+          description: Authentication failed
           content: {}
       x-openapi-router-controller: crud.users_controller
 components:
@@ -243,3 +254,17 @@ components:
           enum:
             - user
             - manager
+    LoginUser:
+      required:
+        - username
+        - password
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      example:
+        username: 'alex123'
+        password: '12345678'
+
