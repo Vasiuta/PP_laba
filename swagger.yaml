@@ -215,8 +215,7 @@ components:
           type: integer
           format: int64
         loan_status:
-          type: boolean
-          default: False
+          type: string
         loan_date:
           type: string
           format: data

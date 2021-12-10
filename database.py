@@ -31,7 +31,7 @@ class Users(Base):
 class Credit(Base):
     __tablename__ = 'credit'
     idCredit = Column(Integer, nullable=False, primary_key=True)
-    loan_status = Column(Boolean, default="false")
+    loan_status = Column(String(45))
     loan_date = Column(String(45))
     loan_amount = Column(Integer)
     interest_rate = Column(Integer)

@@ -6,7 +6,7 @@ from flask import jsonify
 
 @token_required
 def get_credits(current_user):
-    credits = db.query(Credit).filter_by(id_borrower=current_user.id)
+    credits = db.query(Credit).filter_by(id_borrower=current_user.idUsers)
 
     return jsonify([e.as_dict() for e in credits]), 200
 
@@ -22,8 +22,6 @@ def add_credit(current_user, body: CreditSchema):
 
     )
 
-
-
     db.add(credit)
     db.commit()
     db.refresh(credit)
@@ -33,7 +31,8 @@ def add_credit(current_user, body: CreditSchema):
 
 @token_required
 def update_credit(current_user, credit_id, body: CreditSchema):
-    credit = db.query(Credit).filter_by(id_borrower=current_user.id, id=credit_id).first()
+    print(body['loan_status'])
+    credit = db.query(Credit).filter_by(id_borrower=current_user.idUsers, idCredit=credit_id).first()
 
     if not (bool(credit)):
         return jsonify({'Error': 'Not found'}), 404
@@ -42,7 +41,7 @@ def update_credit(current_user, credit_id, body: CreditSchema):
     credit.loan_date = body['loan_date'],
     credit.loan_amount = body['loan_amount'],
     credit.interest_rate = body['interest_rate'],
-    credit.id_borrower = body['id_borrower']
+    credit.id_borrower = current_user.idUsers
 
     db.merge(credit)
     db.flush()
@@ -53,7 +52,7 @@ def update_credit(current_user, credit_id, body: CreditSchema):
 
 @token_required
 def delete_credit(current_user, credit_id):
-    credit = db.query(Credit).filter_by(id_borrower=current_user.id, id=credit_id).first()
+    credit = db.query(Credit).filter_by(id_borrower=current_user.id, idCredit=credit_id).first()
 
     if not (bool(credit)):
         return jsonify({'Error': 'Not found'}), 404
@@ -66,7 +65,7 @@ def delete_credit(current_user, credit_id):
 
 @token_required
 def get_credits_by_user(current_user):
-    user_credits = db.query(User_Credit).filter_by(user_id=current_user.id).all()
+    user_credits = db.query(User_Credit).filter_by(user_id=current_user.idUsers).all()
 
     credits = []
     for ue in user_credits:
@@ -77,14 +76,13 @@ def get_credits_by_user(current_user):
 
 @token_required
 def add_user_to_credit(current_user, credit_id, user_id):
-
     user_credit = User_Credit(
         user_id=user_id,
         credit_id=credit_id
     )
     UserCreditSchema().dump(user_credit)
 
-    if db.query(Credit).get(credit_id).id_borrower != current_user.id:
+    if db.query(Credit).get(credit_id).id_borrower != current_user.idUsers:
         return jsonify({'Error': 'Permision denied'}), 403
 
     db.add(user_credit)
@@ -99,7 +97,7 @@ def delete_user_from_credit(current_user, credit_id, user_id):
     user_credit = db.query(User_Credit).filter_by(user_id=user_id, credit_id=credit_id).first()
     if not (bool(user_credit)):
         return jsonify({'Error': 'Not found'}), 404
-    if db.query(Credit).get(credit_id).owner_id != current_user.id:
+    if db.query(Credit).get(credit_id).id_borrower != current_user.idUsers:
         return jsonify({'Error': 'Permision denied'}), 403
 
     db.delete(user_credit)

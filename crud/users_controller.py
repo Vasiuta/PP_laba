@@ -1,10 +1,10 @@
+import pytest
 from database import *
 from schemas import *
 from app import db, bcrypt, app
 from flask import jsonify
 from flask_jwt import jwt
 import datetime
-
 
 def register_user(body: UsersSchema):
     user = Users(

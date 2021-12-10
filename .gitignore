@@ -110,6 +110,7 @@ ENV/
 env.bak/
 venv.bak/
 Pipfile/
+.pytest_cache
 
 # Spyder project settings
 .spyderproject
