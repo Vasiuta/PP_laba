@@ -1,6 +1,6 @@
 openapi: 3.0.1
 info:
-  title: Calendar API
+  title: Credit API
   version: 1.0.0
 servers:
   - url: /
@@ -25,7 +25,7 @@ paths:
     post:
       tags:
         - Credits
-      summary: Add a new credit to calendar
+      summary: Add a new credit to bank
       operationId: add_credit
       requestBody:
         description: Params for creating credit
@@ -47,7 +47,7 @@ paths:
     put:
       tags:
         - Credits
-      summary: Update credit in calendar
+      summary: Update credit in bank
       operationId: update_credit
       parameters:
         - name: credit_id
@@ -75,12 +75,12 @@ paths:
     delete:
       tags:
         - Credits
-      summary: Delete credit from calendar
+      summary: Delete credit from bank
       operationId: delete_credit
       parameters:
         - name: credit_id
           in: path
-          description: The id of the credit to remove from the calendar
+          description: The id of the credit to remove from the bank
           required: true
           schema:
             type: integer

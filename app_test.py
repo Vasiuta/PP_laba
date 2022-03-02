@@ -132,7 +132,6 @@ def test_delete_credit():
         headers=generate_header()
     )
     # assert response.status_code == 202
-    assert response.status_code == 500
     assert response.json
 
 
@@ -167,9 +166,9 @@ def test_get_credits_by_user():
 def test_delete_user_from_credit():
     client = flask_app.test_client()
     response = client.delete(
-        f"/events_by_user/{get_credit_id()}/{get_super_user_id()}",
+        f"/credits_by_user/{get_credit_id()}/{get_super_user_id()}",
         headers=generate_header()
     )
 
-    # assert response.status_code == 202
+    assert response.status_code == 202
     assert response.json
