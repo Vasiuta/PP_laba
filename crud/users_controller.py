@@ -1,10 +1,10 @@
-import pytest
 from database import *
 from schemas import *
-from app import db, bcrypt, app
+from app import db, bcrypt, app, token_required
 from flask import jsonify
 from flask_jwt import jwt
 import datetime
+
 
 def register_user(body: UsersSchema):
     user = Users(
@@ -39,3 +39,27 @@ def login_user(body: LoginSchema):
         return jsonify({'token': str(token)}), 200
 
     return jsonify({'Error': 'Authentication failed'}), 401
+
+
+@token_required
+def get_user(current_user):
+    user = db.query(Users).filter_by(idUsers=current_user.idUsers)
+
+    return jsonify([e.as_dict() for e in user]), 200
+
+
+@token_required
+def update_user(current_user, body: UsersSchema):
+    users = db.query(Users).filter_by(idUsers=current_user.idUsers).first()
+
+    if not (bool(users)):
+        return jsonify({'Error': 'Not found'}), 404
+
+    users.clientName = body['clientName']
+    users.firstName = body['firstName']
+    users.lastName = body['lastName']
+
+    db.add(users)
+    db.commit()
+
+    return jsonify(users.as_dict()), 201

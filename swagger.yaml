@@ -198,6 +198,41 @@ paths:
           description: Authentication failed
           content: {}
       x-openapi-router-controller: crud.users_controller
+  /users:
+    get:
+      tags:
+        - Users
+      summary: Get loged in user
+      operationId: get_user
+      responses:
+        '200':
+          description: user was successfully returned
+          content: {}
+        '404':
+          description: user doesn`t found
+          content: {}
+      x-openapi-router-controller: crud.users_controller
+    put:
+      tags:
+        - Users
+      summary: Update logged in user
+      operationId: update_user
+      requestBody:
+        description: Params for updating user
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: false
+      responses:
+        '201':
+          description: user updated
+          content: {}
+        '400':
+          description: Validation failed
+          content: {}
+      x-codegen-request-body-name: body
+      x-openapi-router-controller: crud.users_controller
 components:
   schemas:
     Credit:
